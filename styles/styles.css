@@ -19,6 +19,13 @@
   gap: 1rem;
 }
 
+/* Make the left panel fill the full column height so the two boxes are exactly
+   the same height (the grid stretches the column; this stretches the panel
+   inside it to match the right diagram panel). */
+.app-layout__left > .panel {
+  flex: 1 1 auto;
+}
+
 /* Comfortable, zoomable type (WCAG 1.4.4). Body copy floor ~1.125rem, scaled
    in rem so it tracks the browser font setting. We raise sizes on our own
    elements rather than editing the foundation. */
