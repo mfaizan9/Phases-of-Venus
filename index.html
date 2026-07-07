@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phases of Venus</title>
+
+  <!-- Foundation shared styles (copied UNCHANGED into foundation/) -->
+  <link rel="stylesheet" href="foundation/kl-unl.css" type="text/css" media="all">
+  <!-- Sim-specific styles only -->
+  <link rel="stylesheet" href="styles/styles.css" type="text/css" media="all">
+
+  <!-- MathJax (vendored locally under foundation/mathjax/ - no CDN) -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']] },
+      options: { enableMenu: true },     // keep the "Show Math As" context menu (do NOT disable)
+      startup: { typeset: false }        // the sim drives typesetting via kl-unl.js
+    };
+  </script>
+  <script defer src="foundation/mathjax/tex-chtml.js" id="MathJax-script"></script>
+
+  <!-- Foundation equation helper + masthead component -->
+  <script defer src="foundation/kl-unl.js"></script>
+  <script defer src="foundation/kl-unl-masthead.js"></script>
+
+  <!-- Sim logic -->
+  <script defer src="simulation.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Title bar + Reset / Help / About + their dialog are ALL provided by this component. -->
+    <kl-unl-masthead sim-id="venusphases" json-url="foundation/contents.json"></kl-unl-masthead>
+
+    <main class="app-layout">
+
+      <!-- LEFT (25rem): telescope view, readouts, and controls -->
+      <div class="app-layout__left">
+
+        <section class="panel panel--size" aria-labelledby="telescope-heading">
+          <h2 class="panel__heading" id="telescope-heading">Venus as seen through a telescope</h2>
+          <div class="panel__canvas-wrap venus-phase">
+            <span class="sr-only" id="arcminuteSR">The scale bar represents an angular size of 1 arcminute.</span>
+            <div class="venus-phase__canvasbox">
+              <p class="venus-phase__scalelabel" id="arcminuteLabel" aria-hidden="true"></p>
+              <canvas id="phaseCanvas" width="240" height="250"
+                      role="img" aria-describedby="phaseDesc"></canvas>
+            </div>
+            <p class="sr-only" id="phaseDesc">A simulated telescope view of Venus showing its current
+              phase and apparent size, next to a scale bar 1 arcminute long.</p>
+          </div>
+
+          <dl class="readout">
+            <div class="readout__row">
+              <dt class="readout__label">elongation:</dt>
+              <dd class="readout__value">
+                <span id="elongationEqn" aria-hidden="true"></span>
+                <span class="sr-only" id="elongationSR"></span>
+              </dd>
+            </div>
+            <div class="readout__row">
+              <dt class="readout__label">earth&ndash;venus distance:</dt>
+              <dd class="readout__value">
+                <span id="distanceEqn" aria-hidden="true"></span>
+                <span class="sr-only" id="distanceSR"></span>
+              </dd>
+            </div>
+          </dl>
+
+          <div class="panel__actions">
+            <button type="button" id="animBtn" class="button sim-button">start animation</button>
+            <p class="panel__hint">venus and the earth are draggable</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT (1fr): the orbital diagram (top-down view) -->
+      <section class="app-layout__right panel panel--size" aria-labelledby="orbit-heading">
+        <h2 class="panel__heading" id="orbit-heading">Orbital diagram (view from above)</h2>
+        <div class="panel__canvas-wrap">
+          <div class="orbit-stage" id="orbitStage">
+            <canvas id="orbitCanvas" width="560" height="560"
+                    role="img" aria-describedby="orbitDesc"></canvas>
+
+            <!-- Keyboard/pointer drag handles overlaid on the planets. -->
+            <div class="orbit-handle" id="venusHandle" tabindex="0" role="slider"
+                 aria-label="Venus orbital position"
+                 aria-valuemin="0" aria-valuemax="359" aria-valuenow="0"></div>
+            <div class="orbit-handle" id="earthHandle" tabindex="0" role="slider"
+                 aria-label="Earth orbital position"
+                 aria-valuemin="0" aria-valuemax="359" aria-valuenow="0"></div>
+          </div>
+          <p class="sr-only" id="orbitDesc">Top-down view of the inner solar system: the Sun at the
+            centre, with Venus and Earth on their orbits. Drag Venus or Earth, or focus a planet and
+            use the arrow keys, to change the viewing geometry.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Polite live region: announces state changes with units on commit. -->
+    <div class="sr-only" aria-live="polite" id="liveRegion"></div>
+  </div>
+</body>
+</html>

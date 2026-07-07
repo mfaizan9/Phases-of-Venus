@@ -1,0 +1,201 @@
+/* ============================================================================
+   Phases of Venus - sim-specific styles ONLY.
+   Shared palette, layout classes, focus handling, and the 56rem responsive
+   collapse all come from foundation/kl-unl.css (never edited here).
+   ========================================================================== */
+
+/* Layout spacing (rule 12 "even, consistent spacing"): the foundation ships
+   .app-layout / .app-layout__left with gap:0; we add breathing room between
+   panels here (sim-specific, foundation files untouched). align-items:stretch
+   makes the right (diagram) panel match the full height of the stacked left
+   column of panels. */
+.app-layout {
+  gap: 1rem;
+  align-items: stretch;
+  padding: 0.75rem;
+}
+
+.app-layout__left {
+  gap: 1rem;
+}
+
+/* Comfortable, zoomable type (WCAG 1.4.4). Body copy floor ~1.125rem, scaled
+   in rem so it tracks the browser font setting. We raise sizes on our own
+   elements rather than editing the foundation. */
+.panel__heading {
+  font-size: 1.2rem;
+}
+
+/* Action row (button + draggable hint) inside the telescope panel. Padded to
+   the same 1.25rem inset as the canvas box / readouts so all edges line up. */
+.panel__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.panel__hint {
+  margin: 0;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* --- Telescope (phase) view ------------------------------------------------ */
+.venus-phase {
+  padding: 0 1.25rem 0.5rem;
+}
+
+.venus-phase__scalelabel {
+  /* "1 arcminute" sits in white on the black telescope field, above the bar
+     (as in the original). MathJax inherits this colour. */
+  margin: 0;
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.venus-phase__canvasbox {
+  /* Black telescope field, matching the original stage background. */
+  background: #000000;
+  border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #767676);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+}
+
+#phaseCanvas {
+  display: block;
+  width: 100%;
+  max-width: 15rem;      /* 240 logical px; scales down on narrow screens */
+  height: auto;
+  aspect-ratio: 240 / 250;
+}
+
+/* --- Numeric readouts ------------------------------------------------------ */
+.readout {
+  /* Same 1.25rem side inset as the canvas box above, so the readout block is
+     the same width and its edges line up with the black box. */
+  margin: 0.75rem 0 0;
+  padding: 0 1.25rem;
+  display: grid;
+  gap: 0.35rem 0;
+}
+
+.readout__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0 0.75rem;
+}
+
+.readout__label {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.readout__value {
+  margin: 0;
+  font-size: 1.15rem;
+  text-align: right;
+  min-width: 6.5rem;      /* equal-purpose readouts share a width so digits align */
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Orbital diagram stage ------------------------------------------------- */
+.orbit-stage {
+  position: relative;
+  width: 100%;
+  max-width: 35rem;       /* 560 logical px */
+  margin: 0 auto;
+  line-height: 0;
+}
+
+#orbitCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background: #000000;
+  border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #767676);
+  touch-action: none;     /* dragging must not scroll/zoom the page */
+}
+
+/* Focusable, pointer-grabbable handles that sit on top of each planet.
+   Transparent (the planet itself is the visual); >=44px touch target. */
+.orbit-handle {
+  position: absolute;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+
+.orbit-handle:active {
+  cursor: grabbing;
+}
+
+/* Visible focus ring for keyboard users (foundation supplies :focus-visible
+   colour; we round it to match the circular handle). */
+.orbit-handle:focus-visible {
+  outline-width: 0.1875rem;
+  outline-style: solid;
+  outline-color: var(--outline-color, #005fcc);
+  outline-offset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0.125rem var(--background-color, #fff);
+}
+
+/* --- Animation button ------------------------------------------------------ */
+.sim-button {
+  color: var(--button-foreground-color, #ffffff);
+  background-color: var(--button-background-color, #005a9c);
+  border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #767676);
+  border-radius: 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.sim-button:hover,
+.sim-button:focus {
+  filter: brightness(var(--button-hover-darken, 0.9));
+}
+
+/* --- Phone-portrait / small-width refinements ------------------------------
+   The foundation collapses .app-layout to one column at 56rem; below that we
+   keep everything comfortably stacked and full-width in reading order. */
+@media (max-width: 56rem) {
+  .orbit-stage {
+    max-width: 30rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .venus-phase,
+  .readout,
+  .panel__actions {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .readout__value {
+    min-width: 5.5rem;
+  }
+}
+
+/* Respect reduced-motion: the orbital animation is always user-initiated and
+   stoppable; this simply removes the CSS transition polish. */
+@media (prefers-reduced-motion: reduce) {
+  .sim-button {
+    transition: none;
+  }
+}
